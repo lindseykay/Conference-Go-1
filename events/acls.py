@@ -30,7 +30,11 @@ def get_weather_data(city, state):
     # Get the main temperature and the weather's description and put
     #   them in a dictionary
     # Return the dictionary
-    payload = {"q": f"{city}, {state}", "appid": OPEN_WEATHER_API_KEY}
+    payload = {
+        "q": f"{city}, {state}, USA",
+        "appid": OPEN_WEATHER_API_KEY,
+        "limit": 1,
+    }
     url = "http://api.openweathermap.org/geo/1.0/direct"
     response = requests.get(url, params=payload)
     content = json.loads(response.content)
@@ -41,14 +45,21 @@ def get_weather_data(city, state):
         lat = None
         lon = None
 
-    payload2 = {"lat": lat, "lon": lon, "appid": OPEN_WEATHER_API_KEY}
+    payload2 = {
+        "lat": lat,
+        "lon": lon,
+        "appid": OPEN_WEATHER_API_KEY,
+        "units": "imperial",
+    }
     url2 = "https://api.openweathermap.org/data/2.5/weather"
     response2 = requests.get(url2, params=payload2)
     content2 = json.loads(response2.content)
     try:
+        # k_temp = content2["main"]["temp"]
+        # f_temp = round(1.8 * (k_temp - 273) + 32)
         return {
             "temp": content2["main"]["temp"],
-            "description": content2["weather"]["description"],
+            "description": content2["weather"][0]["description"],
         }
     except:
         return {"temp": None, "description": None}
